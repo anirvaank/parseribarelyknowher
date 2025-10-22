@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Make",
+      "type": "process",
+      "command": "C:\\c stuff\\usr\\bin\\bash.exe",
+      "args": [
+        "-lc",
+        "cd \"$(cygpath -u \"${workspaceFolder}\")\" && make && make clean"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}",
+        "env": {
+          "MSYSTEM": "MINGW64",
+          "PATH": "C:\\c stuff\\mingw64\\bin;${env:PATH}"
+        }
+      },
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": ["$gcc"]
+    }
+  ]
+}
