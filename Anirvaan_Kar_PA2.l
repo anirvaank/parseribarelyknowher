@@ -7,9 +7,6 @@
 %option nounput noinput
 %option yylineno
 
-/* ===== Definitions ===== */
-
-/* Keywords (ALL CAPS, case-sensitive) */
 KW_PROGRAM    PROGRAM
 KW_FUNCTION   FUNCTION
 KW_VAR        VAR
@@ -23,35 +20,28 @@ KW_ELSE       ELSE
 KW_BEGIN      BEGIN
 KW_END        END
 
-/* Identifiers: one or more lower-case letters */
 ID            [a-z]+
 
-/* Integers */
 ZERO          0
 NZDIGIT       [1-9]
 DIGIT         [0-9]
-SIGNED_NZINT  [\+\-]?{NZDIGIT}{DIGIT}*
+INT           {NZDIGIT}{DIGIT}*
 
-/* Strings: single quotes; letters/digits/space; empty allowed */
-STRCHR        [A-Za-z0-9 ]
-STRING        \'({STRCHR})*\'
+STRING        \'[^'\n]*\'
 
-/* Comments { ... } no newline inside */
 COMMENT       \{[^}\n]*\}
 
-/* Punctuators */
 P_LE          <=
 P_GE          >=
 P_NE          <>
 P_ASSIGN      :=
 
-/* Single-char set (handled in action) */
 P_SINGLE      [\*\+\/\-\<\>\=\(\)\,\;\.\:]
 
-/* Whitespace */
-WS            [ \t\r\n]+
+WS            [ \t\r\n\xA0]+
 
 %%
+"\xEF\xBB\xBF"     { }
 {COMMENT}          { }
 {WS}               { }
 
@@ -70,7 +60,7 @@ WS            [ \t\r\n]+
 
 {ID}               { return ID; }
 {ZERO}             { return NUM; }
-{SIGNED_NZINT}     { return NUM; }
+{INT}              { return NUM; }
 {STRING}           { return STR; }
 
 {P_LE}             { return LE; }
@@ -102,4 +92,3 @@ WS            [ \t\r\n]+
 .                  { return yytext[0]; }
 
 %%
-/* nothing else */

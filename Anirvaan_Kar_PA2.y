@@ -4,7 +4,6 @@ int yylex(void);
 void yyerror(const char *s);
 %}
 
-
 %define parse.error verbose
 
 %token PROGRAM FUNCTION VAR INTEGER STRING
@@ -80,7 +79,6 @@ opt_semi
   | SEMI
   ;
 
-
 statement_list
   : statement
   | statement_list SEMI statement
@@ -88,6 +86,8 @@ statement_list
 
 statement
   : ID ASSIGN expression
+  | ID LPAREN RPAREN
+  | ID LPAREN expression_list RPAREN
   | compound_statement
   | selection_statement
   | iteration_statement
@@ -104,7 +104,7 @@ iteration_statement
 
 expression_list
   : expression
-  : expression_list COMMA expression
+  | expression_list COMMA expression
   ;
 
 expression
@@ -135,6 +135,8 @@ factor
   | STR
   | LPAREN expression RPAREN
   | ID LPAREN expression_list RPAREN
+  | PLUS factor
+  | MINUS factor
   ;
 
 %%

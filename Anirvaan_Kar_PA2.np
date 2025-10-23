@@ -1,15 +1,15 @@
-{ a comment }
-PROGRAM p;
-VAR x, y: INTEGER;
-VAR msg: STRING;
+{ Find factorial by recursion }
+PROGRAM recfactorial;
+VAR n, r: INTEGER;
+FUNCTION factorial(n: INTEGER): INTEGER;
 BEGIN
-  x := 0;
-  y := -5 + +12;
-  msg := 'hi 123';
-  IF x == y THEN
-  BEGIN
-    x := x - -5
-  END
-  ELSE
-    x := x + 1
+IF n = 0 THEN
+factorial := 1
+ELSE
+factorial := n * factorial(n-1)
+END;
+BEGIN
+n := 5;
+r := factorial(n);
+writeln(n, '! = ', r)
 END.
