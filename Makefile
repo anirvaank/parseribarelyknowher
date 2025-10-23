@@ -1,39 +1,42 @@
-# ===== Config: set your name or rename files to match =====
+# 
+
+.RECIPEPREFIX := >
 NAME    ?= Anirvaan_Kar
-LEXERL  := $(NAME)_PA1.l
-TESTNP  := $(NAME)_PA1.np
+LEXERL  := $(NAME)_PA2.l
+PARSERY := $(NAME)_PA2.y
+TESTNP  ?= $(NAME)_PA2.np
 
 LEX     ?= flex
+YACC    ?= bison
 CC      ?= gcc
 CFLAGS  ?= -O2 -Wall
 LDFLAGS ?=
-LDLIBS  ?=   # with %option noyywrap, -lfl not needed
+LDLIBS  ?=
 
-# Default: build and run on the sample
-all: lexer run
+all: run
 
-# Build the lexer
-lexer: lex.yy.o main.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
+parser: parser.tab.o lex.yy.o main.o
+> $(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-# Generate scanner from .l
-lex.yy.c: $(LEXERL)
-	$(LEX) -o $@ $<
+parser.tab.c parser.tab.h: $(PARSERY)
+> $(YACC) -d -o parser.tab.c --defines=parser.tab.h $<
 
-# Compile objects
-lex.yy.o: lex.yy.c
-	$(CC) $(CFLAGS) -c $<
+lex.yy.c: $(LEXERL) parser.tab.h
+> $(LEX) -o $@ $<
 
-main.o: main.c
-	$(CC) $(CFLAGS) -c $<
+parser.tab.o: parser.tab.c
+> $(CC) $(CFLAGS) -c $<
 
-# Run on your sample .np file
-run: lexer $(TESTNP)
-	@echo "== Running lexer on $(TESTNP) =="
-	./lexer $(TESTNP)
+lex.yy.o: lex.yy.c parser.tab.h
+> $(CC) $(CFLAGS) -c $<
 
-# Clean build artifacts
+main.o: main.c parser.tab.h
+> $(CC) $(CFLAGS) -c main.c
+
+run: parser $(TESTNP)
+> ./parser $(TESTNP)
+
 clean:
-	rm -f lex.yy.c *.o lexer
+> rm -f parser parser.tab.c parser.tab.h lex.yy.c *.o
 
 .PHONY: all run clean
